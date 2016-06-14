@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>函数节流</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<form name="selectForm" >
+	<p>
+		<label for="musicTypes">choose some music</label>
+		<select id="musicTypes" name="musicTypes" multiple>
+			<option selected="selected">R&B</option>
+			<option>爵士</option>
+			<option>布鲁斯</option>
+			<option>新纪元</option>
+			<option>古典</option>
+			<option>戏剧</option>
+		</select>
+	</p>
+	<p><input id="btn" type="button" value="选择了多少个选项"></p>
+</form>
+<script type="text/javascript">
+	var exampleObj ={n:1,s:'string',y:undefined,arr:[1,2,3],b:true,x:null,obj:{j:666,k:777}};
+	var exampleStr =JSON.stringify(exampleObj);//序列化
+	var exampleStr2 = JSON.parse(exampleStr);//还原对象
+	console.log(exampleObj);
+	console.log(exampleStr);
+	console.log(exampleStr2);
+	function Person(name,age,job){
+		this.name = name;
+		this.age = age;
+		this.job =job;
+	}
+	Person.prototype = {
+		// 这里务必要重新将构造函数指回Person构造函数，否则会指向这个新创建的对象
+		 constrctor: Person,
+		 sayName: function(){
+		 	console.log(this.name)
+		 }
+	};
+	var person1 = new Person("tom","15","stundent");
+	var person2 = new Person("lily","19","solider");
+	person1.sayName();
+	person2.sayName();
+	console.log(person1.__proto__ === Object.getPrototypeOf(person1))
+	console.log(Object.getPrototypeOf(person1) === Person.prototype)
+	
+
+	function howMany(selectObject) {
+	  var numberSelected = 0;
+	  for (var i = 0; i < selectObject.options.length; i++) {
+	    if (selectObject.options[i].selected) {
+	      numberSelected++;
+	    }
+	  }
+	  return numberSelected;
+	}
+
+	var btn = document.getElementById("btn");
+	btn.addEventListener("click", function(){
+	  alert('选择选项的数量是: ' + howMany(document.selectForm.musicTypes))
+	});
+
+	var relationHook = {
+		"xijinping":1000,
+		"ligang":500,
+		"pengdehuai":100
+	}
+
+	function examinee(name,score,fatherName){
+		return{
+			name:name,
+			score:score,
+			fatherName:fatherName
+		}
+	}
+
+	function judge(examinees){
+		var result = {};
+		for(var i in examinees){
+			var curExaminee = examinees[i];
+			var ret = curExaminee.score;
+			if(relationHook[curExaminee.fatherName]){
+				ret += relationHook[curExaminee.fatherName];
+			}
+			result[curExaminee.name] =ret;
+		}
+		return result;
+	}
+	var lihao = examinee("lihao", 10, 'ligang');
+	var xida = examinee('xida', 8, 'xijinping');
+	var peng = examinee('peng', 60, 'pengdehuai');
+	var liaoxiaofeng = examinee('liaoxiaofeng', 100, 'liaodaniu');
+	 
+	var result = judge([lihao, xida, peng, liaoxiaofeng]);
+	 
+	// 根据分数选取前三名
+	for (var name in result) {
+	    console.log("name:" + name+"fatherName:"+fatherName);
+	    console.log("score:" + score);
+	    // console.log("score:" + score);
+	}
+
+
+</script>    
+</body>
+</html>

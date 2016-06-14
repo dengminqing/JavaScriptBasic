@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=">
+<title>test</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+</head>
+<body>
+<style type="text/css">
+#drag1 {
+    width: 50px;
+    height: 50px;
+    background-color: #404040;
+    cursor: pointer;
+}
+.addcordion-header{
+	height: 30px;
+	border: 1px solid #ccc;
+	width: 300px;
+}
+.content{
+	width: 300px;
+	height: 300px;
+	border: 1px solid #ccc;
+}
+#nav li{
+	float: left;	
+	list-style: none;
+
+}
+.tclass{
+	background: #f00;
+	color:#fff;
+}
+#nav{
+	clear: both;
+}
+</style>
+<div id = "drag1"></div>
+<div id="addcordion">
+	<div class="addcordion-header"></div>
+	<div class="content">12312321323213213123</div>
+	<ul id='nav'>
+	    <li>导航一</li>
+	    <li>导航二</li>
+	    <li>导航三</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$("#addcordion").find(".content").hide();
+		$("#addcordion").find(".addcordion-header").click(function(){
+			var next = $(this).next();
+			next.slideToggle("fast");
+			$(".content").not(next).slideUp('fast');
+			return false;
+		})
+		$("#nav").click(function(e){
+			$(e.target).addClass('tclass').siblings('.tclass').removeClass('tclass');
+		})
+	})
+
+	var mixedEmails = ['JOHN@ACME.COM', 'Mary@FooBar.com', 'monty@spam.eggs'];
+	function downcase(str){	
+		return str.toLowerCase();
+	}
+	document.write(mixedEmails.map(downcase));
+</script>
+<script type="text/javascript">
+	//对象键值对法:判断该对象是否存在数组的某一项，不存在则创建赋值作为一个标识
+	function arrUnique(arrs){
+		var newArray = [];
+		var hash = {},
+			ilen = arrs.length;
+
+		if(ilen > 0 ){
+			console.log(ilen)
+			for(var i = 0 ;i<ilen; i+=1){
+				// console.log(hash[arrs[i]]+"..")
+				if (!hash[arrs[i]]) {
+					// console.log(hash[arrs[i]]+"--")
+					hash[arrs[i]] = 1;
+					// console.log(hash[arrs[i]])
+					newArray.push(arrs[i]);
+				};
+			}
+		}
+		return newArray;
+	}
+
+	var arrs = [,,,,,,,,,,];
+	document.write("对象键值对法"+arrUnique(arrs));
+	
+	//拖拉
+	window.onload = function() {
+		function Drag(obj) {
+		  this.obj = obj;
+		}
+		Drag.prototype = {
+			constructor: Drag,
+		    getInitPosition: function(e) {
+			    e = e || window.event;
+			    var eX,eY;
+			    if(e.pageX || e.pageY){
+			         eX = e.pageX;
+			         eY = e.pageY;
+			    }
+			    eX = e.clientX;
+			    eY = e.clientY;
+			    var positionX = eX- this.obj.offsetLeft;
+			    var positionY = eY - this.obj.offsetTop;
+			    return {
+			         x: positionX,
+			        y: positionY
+			    } 
+			},
+			getmouseCoordinate:function(e) {
+			     e = e || window.event;
+			     if(e.pageX || e.pageY){
+			           return {x:e.pageX, y:e.pageY};
+			     }
+			     return {
+			           x:e.clientX + document.body.scrollLeft - document.body.clientLeft,
+			          y:e.clientY + document.body.scrollTop  - document.body.clientTop
+			      };    
+			},
+			initDrag:function() {
+			     var tempThis = this;
+			     this.obj.onmousedown = function(e) {
+			         var initP = tempThis.getInitPosition();
+			         document.onmousemove = function(e) {
+			            var moveP = tempThis.getmouseCoordinate();
+			            tempThis.obj.style.marginTop = moveP.y - initP.y + "px"; 
+			            tempThis.obj.style.marginLeft = moveP.x - initP.x + "px"; 
+			         }
+			         document.onmouseup = function(){ 
+			             document.onmousemove = null;  
+			            document.onmouseup = null; 
+			        }
+			    }
+			}
+		}
+		var drag = document.getElementById("drag1");
+		var dragElement = new Drag(drag);
+		dragElement.initDrag();
+	}
+
+	(function(){
+	  var a = b = 3;
+	}());
+	 
+	//console.log("a defined? " + a);
+	(function() {
+	    console.log(1); 
+	    setTimeout(function(){console.log(2)}, 1000); 
+	    setTimeout(function(){console.log(3)}, 0); 
+	    console.log(4);
+	})();
+
+	var sayHello;
+	console.log(typeof (sayHey) +"..."); //=>function    
+	console.log(typeof (sayHo)+"---"); //=>undefined
+	if (true) {		
+	    function sayHey() {
+	        console.log("sayHey");
+	    }
+	    sayHello = function sayHo() {
+	        console.log("sayHello");
+	    }
+	} else {
+	    function sayHey() {
+	        console.log("sayHey2");
+	    }
+	    sayHello = function sayHo() {
+	        console.log("sayHello2");
+	    }
+	}
+	sayHey(); // => sayHey2    
+	sayHello(); // => sayHello
+
+	
+
+</script>    
+</body>
+</html>

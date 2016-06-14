@@ -1,0 +1,191 @@
+<html>
+	<head>
+		<meta name="name" content="content" chatset="utf-8">
+		<title> just a test </title>
+	</head>
+	<script>
+		//	for…in循环会遍历数组对象的原型链中所有的可枚举属性
+		Array.prototype.voice = "james mary tom";//原型
+		var tMin = ["two","one","black"];
+		var count = "";
+		// for(var step in tMin){
+		// 	count += tMin[step] +"<br/>";
+		// }
+		// document.write(count+"<br/>");
+		//hasOwnProperty函数来避免这一问题
+		for(var a in tMin){
+			if (tMin.hasOwnProperty(a)) {
+				count += tMin[a] +"<br/>"
+			};
+		}
+		document.write(count+"<br/>");
+		var repeat =(function(){
+			var join = Array.prototype.join,obj ={};
+			return function(target,n){
+				obj.length = n+1;
+				return join.call(obj,target);
+			}
+		})
+
+		var getResult = (function(){
+			var res = 2+2;
+			return function(){
+				return res;
+			};
+		}());
+		var red =({
+		    // here you can define setting values
+		    // a.k.a. configuration constants
+		    maxwidth: 600,
+		    maxheight: 400,
+
+		    // you can also define utility methods
+		    gimmeMax: function () {
+		        return this.maxwidth + "x" + this.maxheight;
+		    },
+
+		    // initialize
+		    init: function () {
+		        document.write(this.gimmeMax());
+		        // more init tasks...
+		    }
+		}).init()
+
+		function schonfinkelize(fn){
+			var slice = Array.prototype.slice,
+				stored_args = slice.call(arguments,1);
+			return function(){
+				var news_args = slice.call(arguments),
+					args = stored_args.concat(news_args);
+				return fn.apply(null, args)
+			}
+		}
+
+		var MYAPP ={};
+		
+		if(typeof MYAPP === "undefined"){
+			
+			var MYAPP = {};
+		}
+		var MYAPP = MYAPP || {};
+		// MYAPP.Parent = function(){};
+		// MYAPP.Child = function(){};
+
+		// MYAPP.some_var = 1;
+		// MYAPP.modules = {}
+
+		// MYAPP.modules.module1 = {};
+		// MYAPP.modules.module1.data = {a:1,b:2};
+		// MYAPP.modules.module2 = {}
+		MYAPP.namespace = function(ns_string){
+			alert(ns_string)
+			var parts = ns_string.split('.'),
+				parent =MYAPP,
+				i;
+
+			if(parts[0] === "MYAPP"){				
+				parts = parts.slice(1);
+				console.log(parts[0] === "MYAPP")
+			}
+
+			for(i = 0;i<parts.length;i+=1){
+				if(typeof parent[parts[i]] === "undefined"){
+					parent[parts[i]] = {};
+				}
+				parent = parent[parts[i]];
+			}
+			return parent;
+		}
+		var module2 = MYAPP.namespace('MYAPP.modules.module2'); 
+			console.log(module2 === MYAPP.modules.module2); // true
+		console.log(MYAPP.namespace('once.upon.a.time.there.was.this.long.nested.property'))
+		
+		function Gadget(){
+			var name ="IPod";
+			this.getName = function () {
+		        return name;
+		    };
+		}
+		
+		Gadget.prototype =(function(){
+			var broswer = "MOblie";
+			return{
+				getBrowser:function(){
+					return broswer;
+				}
+			}
+		}());
+
+		//暴露模式
+		var myarray;
+
+		(function () {
+
+		    var astr = "[object Array]",
+		        toString = Object.prototype.toString;
+
+		    function isArray(a) {
+		        return toString.call(a) === astr;
+		    }
+
+		    function indexOf(haystack, needle) {
+		        var i = 0,
+		            max = haystack.length;
+		        for (; i < max; i += 1) {
+		            if (haystack[i] === needle) {
+		                return i;
+		            }
+		        }
+		        return -1;
+		    }
+
+		    myarray = {
+		        isArray: isArray,
+		        indexOf: indexOf,
+		        inArray: indexOf
+		    };
+
+		}());
+		// console.log(myarray.isArray([1,2]))
+		// console.log(myarray.isArray({0:1}))
+		// console.log(myarray.indexOf(["a","b","z"],"z"))
+		// console.log(myarray.inArray(["a","b","z"],"z"))
+
+		//公有静态成员
+		var Gad = function(){};
+		Gad.isA = function(){
+			return "you get";
+		};
+
+		Gad.prototype.setPrice = function(price){
+			this.price = price;
+		};
+		console.log(Gad.isA());
+
+		var iphone = new Gad();
+		iphone.setPrice(500)
+		console.log(typeof Gad.setPrice);
+		console.log(typeof iphone.isA);
+		
+		//私有静态
+		var Gad2 = (function(){
+			var count = 0,
+				NewGad;
+
+			NewGad =function(){
+				count +=1;
+			};
+
+			NewGad.prototype.getLastId =function(){
+				return count;
+			};
+			return NewGad;
+		}());
+		var g1 = new Gad2();
+		var g2 = new Gad2();
+		var g3 = new Gad2();
+	</script>
+ <body>
+
+ </body>
+</html>

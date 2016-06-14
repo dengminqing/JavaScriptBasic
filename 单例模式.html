@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>设计模式</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	/*
+	1.单例---单例模式的核心思想是让指定的类只存在唯一一个实例。这意味着当你第二次使用相同的类去创建对象的时候，你得到的应该和第一次创建的是同一个对象；这如何应用到JavaScript中呢？在JavaScript中没有类，只有对象。当你创建一个对象时，事实上根本没有另一个对象和它一样，这个对象其实已经是一个单例。
+	*/
+	//使用对象字面量创建一个简单的对象也是一种单例的例子：
+	var obj ={ myprop:'my value'};
+	var obj2 ={ myprop:'my value'};
+	console.log((obj === obj2) +"...单例");//false
+	console.log((obj == obj2) +"...单例");//faslse
+
+	//在JavaScript中，对象永远不会相等，除非它们是同一个对象，所以即使你创建一个看起来完全一样的对象，它也不会和前面的对象相等;但是JavaScript有使用new、通过构造函数来创建对象的语法，有时候你可能需要这种语法下的一个单例实现。这也就是说当你使用new、通过同一个构造函数来创建多个对象的时候，你应该只是得到同一个对象的不同引用。
+	var uni = new Universe();
+	var uni2 = new Universe();
+	console.log((uni === uni2)+"...同一个对象的两个引用");//true 同一个对象的两个引用；当对象实例this被创建时，你需要在Universe构造函数中缓存它，以便在第二次调用的时候返
+
+	//你也可以将对象实例缓存在构造函数的属性中。在JavaScript中，函数也是对象，所以它们也可以有属性。你可以写一些类似Universe.instance的属性来缓存对象。这是一种漂亮干净的解决方案，不足之处是instance属性仍然是可以被公开访问的，别人写的代码可能修改它，这样就会失去这个实例
+
+	//1.将实例放到静态属性中----下面是一个将唯一的实例放入Universe构造函数的一个静态属性中的例子
+	function Universe(){
+		if (typeof Universe.instance ==="object") {
+			return Universe.instance;
+		};
+
+		this.start_time = 0;
+		this.bang = " Big";
+		//cache
+		Universe.instance = this;
+
+		// implicit return:
+    	// return this;
+	}
+	var test1 = new Universe();
+	var test2 = new Universe();
+	console.log((test1 == test2)+"..将实例放到静态属性中");
+
+	//你可以将实例包裹在闭包中。这可以保持实例是私有的，不会在构造函数之外被修改，代价是一个额外的闭包
+
+	//2.将实例放到闭包中
+	function Universe2(){
+		var instance = this;
+		this.start_time = 0;
+		this.bang ="Big";
+
+		// rewrite the constructor重写构造
+		Universe2 = function () {
+			return instance;
+		};
+	}
+	var test3= new Universe2();
+	var test4 = new Universe2();
+	console.log((test3 == test4)+"..将实例放到闭包中");
+
+
+	function Universe3(){
+		var instance = this;
+		this.start_time = 0;
+		this.bang ="Big";
+
+		// rewrite the constructor重写构造
+		Universe3 = function () {
+			return instance;
+		};
+	}
+	Universe3.prototype.nothing = true;
+
+    var uni5 = new Universe3();
+
+    // again adding to the prototype
+    // after the initial object is created
+    Universe3.prototype.everything = true;
+
+    var uni6 = new Universe3();
+
+    // only the original prototype was
+    // linked to the objects
+    console.log(uni5.nothing); // true
+    console.log(uni6.nothing); // true
+    console.log(uni5.everything); // undefined
+    console.log(uni6.everything); // undefined
+
+    //uni.constructor不再和Universe()相同的原因是uni.constructor仍然是指向原来的构造函数，而不是被重新定义的那个。
+
+    /*
+    如果一定被要求让prototype和constructor的指向像我们期望的那样，可以通过一些调整来做到
+    */ 
+    function Universe4(){
+    	//缓存实例
+    	var instance;
+    	//重写构造函数
+    	Universe4 = function Universe4(){
+    		return instance;
+    	}
+
+    	//进行原型属性
+    	Universe4.prototype = this;
+    	//实例
+    	instance = new Universe4();
+    	//重置构造函数指针
+    	instance.constructor = Universe4;
+    	//所有功能
+    	instance.start_time = 0;
+    	instance.bang="big";
+
+    	return instance;
+
+    }
+
+    //test Universe4（）
+    Universe4.prototype.nothing = true;
+    var uni7 =new Universe4();
+    Universe4.prototype.everything = true;
+    var uni8 =new Universe4();
+    console.log((uni7 === uni8) +"..test4");
+    console.log(uni7.bang)
+    console.log((uni7.constructor === Universe4)+"..正确的构造函数点");
+
+    //将构造函数和实例包在一个立即执行的函数中。当构造函数第一次被调用的时候，它返回一个对象并且将私有的instance指向它。在后续调用时，构造函数只是简单地返回这个私有变量
+    var Universe5;
+    (function(){
+    	var instance;
+    	Universe5 =function Universe5(){
+    		
+    
+	    	if (instance) {
+	    		return instance;
+	    	};
+	    	instance = this;
+
+	    	this.start_time = 0;
+	    	this.bang = "Big";
+    	}
+    }());
+
+    Universe5.prototype.nothing = true;
+    var uni9 = new Universe5();
+    Universe5.prototype.everything = true;
+    var uni10 =new Universe5();
+    console.log((uni9 === uni9) +"..test5");
+    console.log(uni9.bang)
+    console.log((uni9.constructor === Universe5)+"..正确的构造函数点");
+
+    //总结：单例模式核心思想是让指定的类只存在唯一一个实例。这意味着当你第二次使用相同的类去创建对象的时候，你得到的应该和第一次创建的是同一个对象。
+
+    var createDiv = function(html){
+        this.html = html;
+        this.init();
+    }
+
+    createDiv.prototype.init = function(){
+        var div = document.createElement("div");
+        div.innerHTML = this.html;
+        document.body.appendChild(div);
+    }
+
+    var proxy = (function(){
+        var instance;
+        return function(html){
+            if (!instance) {
+                instance = new createDiv("test");
+            }
+            return instance;
+        }
+    })()
+    var a = new proxy("aaa");
+    var b = new proxy("bbb");
+    console.log(a===b)
+</script>    
+</body>
+</html>

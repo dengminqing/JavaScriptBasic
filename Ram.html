@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+<script type="text/javascript">
+	var o = { 
+	  a: {
+	    b:2
+	  }
+	}; 
+	// 两个对象被创建，一个做为另一个的属性被引用，另一个被分配给变量o
+	// 很显然，没有一个可以被垃圾收集
+	 
+	var o2 = o; // o2变量是第二个对“这个对象”的引用
+	hio = 1; // 现在，“这个对象”的原始引用o被o2替换了
+	 
+	var oa = o2.a; // 引用“这个对象”的a属性
+	// 现在，“这个对象”有两个引用了，一个是o2，一个是oa
+	 
+	o2 = "yo"; // 最初的对象现在已经是零引用了
+	// 他可以被垃圾回收了
+	// 然而它的属性a的对象还在被oa引用，所以还不能回收
+	 
+	oa = null; // a属性的那个对象现在也是零引用了
+	// 它可以被垃圾回收了
+	document.write(o+"<br/>");
+	document.write(o2+"<br/>")
+	document.write(oa+"<br/>")	
+
+	var firstClosure;
+	var secondClosure;
+
+	function foo() {
+
+	  var x = 1;
+
+	  firstClosure = function () { return ++x; };
+	  secondClosure = function () { return --x; };
+
+	  x = 2; // 影响 AO["x"], 在2个闭包公有的[[Scope]]中
+
+	  // alert(firstClosure()); // 3, 通过第一个闭包的[[Scope]]
+	}
+
+	foo();
+
+	// alert(firstClosure()); // 4
+	// alert(secondClosure()); // 3
+
+</script>
+</body>
+</html>

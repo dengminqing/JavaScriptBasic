@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>prototype</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+ <script type="text/javascript">
+	/*
+	 	基本概念-每一个函数都有一个prototype（原型）属性，这个属性是一个指针，指向了一个对象，而这个对象用途是包含该类的所有势力共享属性和方法
+	*/
+
+	//不用原型写法
+	var decimalDigits = 2,tax = 5;
+	function add(x,y){
+		return x + y;
+	};
+	function subtract(x,y){
+		return x - y;
+	};
+
+	//alert(1,3);
+
+	//原型写法第一种
+
+	var Calculator = function(decimalDigits,tax){
+		this.decimalDigits = decimalDigits;
+		this.tax = tax;
+	};
+
+	Calculator.prototype = {
+		add:function(x,y){
+			return x + y;
+		},
+		subtract:function(x,y){
+			return x - y;
+		}
+	}
+
+	var cal = new Calculator();
+	//alert(cal.add(1,3))
+
+	//第二种方式
+	Calculator.prototype = function(){}();
+	Calculator.prototype = function () {
+	    add = function (x, y) {
+	        return x + y;
+	    },
+	 
+	    subtract = function (x, y) {
+	        return x - y;
+	    }
+	    return {
+	        add: add,
+	        subtract: subtract
+	    }
+	} ();
+	//alert(new Calculator().add(1,3))
+
+	//第三种方式
+	var bar = function(){
+		this.decimalDigits = 2;
+	}
+
+	bar.prototype.add = function(x,y){
+		return x + y;
+	}
+
+	bar.prototype.subtract = function(x,y){
+		return x - y;
+	}
+
+	/*
+	原型链--原型链作为实现继承的主要方法;利用原型让一个引用类型继承另一个引用类型的属性和方法;
+	简单回顾一下构造函数、原型和实例的关系：每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数的指针，而实际都包含一个指向原型对象的内部指针。
+	那么假如我们让原型对象等于另一个类型的实例，结果会怎么样那？显然，此时的原型对象将包含一个指向另一个原型的指针，相应地，另一个原型中也包含着一个指向另一个构造函数的指针。
+	假如另一个原型又是另一个类型的实例，那么上述关系依然成立，如此层层递进，就构成了实例与原型的链条。这就是所谓原型链的基本概念
+	*/ 
+
+	function SuperType(){ 
+	  this.property=true;
+	}
+	SuperType.prototype.getSuperValue=function(){ 
+	  return this.property;
+	};
+	function SubType(){ 
+	  this.subproperty=false;
+	}
+	SubType.prototype=new SuperType();
+	SubType.prototype.getSubValue=function(){ 
+	  return this.subproperty;
+	};
+
+
+	var instance = new SubType();
+	//alert(instance.getSuperValue())
+	// document.onclick=function(e){
+	//      var e=(e||event);
+	//      var o=e["target"]||e["srcElement"];
+	//      alert(o.tagName.toLowerCase());
+	// }
+
+	// var a = {
+	//   x: 10,
+	//   calculate: function (z) {
+	//     return this.x + this.y + z
+	//   }
+	// };
+	 
+	// var b = {
+	//   y: 20,
+	//   __proto__: a
+	// };
+	 
+	// var c = {
+	//   y: 30,
+	//   __proto__: a//继承
+	// };
+	 
+	// 调用继承过来的方法
+	// alert(b.calculate(30)); // 60
+	// alert(c.calculate(40)); // 80
+
+	
+ </script>   
+</body>
+</html>

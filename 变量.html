@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	// -----------------------全局无法访问局部范围定义------------------------------------------//
+	var al ='global';
+	function someFunction(){
+		var alocal ="local";
+		console.log(al+':1111');
+	}
+	someFunction();
+	//全局无法访问局部范围定义
+	//console.log(alocal+'---------');// Uncaught ReferenceError: alocallydefinedvariable is not defined
+	//总结：使用var声明变量，一旦在父范围声明，就会作为各自子范围的一部分。即在本地范围内有效，但本地定义的变量不可再全局范围内访问
+
+	// -------------作用域：函数内局部变量没有定义var，则该变量会变成全局---------------------//	
+	var a = 1;
+	function someFuction2(){
+		a = 2;
+		function anotherFuction(){
+			console.log(a+"调用函数someFuciont2全局函数");
+		}
+		anotherFuction();
+	}
+	someFuction2();
+	console.log(a+"调用函数局部");
+	//总结：首先在父作用域内搜索一个未定义的变量，然后在到全局范围进行搜索
+
+	//当你想从一个局部范围修改全局定义的变量，你也可以通过修改Window对象的相应的属性来做到这一点//
+	var myVariable = "global Scope";
+	function myFunction(){
+		window.myVariable = "something Else";
+	}
+	myFunction();
+	console.log(myVariable)
+
+	//闭包
+	function greet(who){
+		var iteration = 0;
+		return function (){
+			console.log(++iteration);
+			return 'hello' + who + '!';			
+		};
+	}
+	var greeting = greet('Wolrd');
+	console.log(typeof greeting+"---");//检测是方法
+	console.log(typeof greeting()+"====");//检测室字符串
+	console.log(greeting()+"-----");//hello Wolrd !;
+	console.log(greeting("universe"));//hello Wolrd !;为什么没有替换字符串
+
+	//总结：正如你上面看到的那样，greet() 返回一个被称为“闭包”的内部函数。闭包除了会储存他们自己本地作用域内部的封闭起来的函数和变量外，还会存储外部引用的参数。参看我们的具体例子，参数 who 和 iterations 就是被闭包封闭起来的局部变量。
+	//这意味着，greeting已成为一个包含who和iterations在内的函数（直接返回的匿名函数）。- 它不会再次执行greet，它只会执行闭包而且返回结果永远是 "Hello World!"。 
+
+
+</script>
+</body>
+</html>

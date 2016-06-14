@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>test</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<!-- <input type="file" value="" id="input"  multiple="" /> -->
+<textarea onkeyup="this.value=this.value.replace(/[^\r\n0-9\,\，]/g,'');"></textarea>
+<body>
+<script type="text/javascript" >
+var arr =["mike","tom",",mary"];
+arr.forEach( function(element, index) {
+	//alert(index+"."+element);
+});
+
+//使用命名或匿名函数作为回调
+var allAll = [];
+function logStuff(userData){
+	if(typeof userData === "string"){
+		console.log(userData)
+	}
+	else if(typeof userData === "object"){
+		for(var item in userData){
+			console.log(item + ":" +userData[item])
+		}
+	}
+}
+var getAllLastName = "121212"
+function getInput(options,callback){	
+	allAll.push(options);
+	callback(getAllLastName,options);
+}
+getInput({name:"tom",lang:"javascript"},logStuff)
+
+/*
+page
+*/ 
+function showPageCommon(config) {  
+    return function (page, total) {
+        var str = '<a>' + page + '</a>';
+
+        for (var i = 1; i <= 3; i++) {
+            if (page - i > 1) {
+                str = '<a class="' + config.color + '">' + (page - i) + '</a> ' + str;
+            }
+            if (page + i < total) {
+                str = str + ' ' + (page + i);
+            }
+        }
+
+        if (page - 4 > 1) {
+            str = '... ' + str;
+        }
+
+        if (page > 1) {
+            str = '上一页 ' + 1 + ' ' + str;
+        }
+
+        if (page + 4 < total) {
+            str = str + ' ...';
+        }
+
+        if (page < total) {
+            str = str + ' ' + total + ' 下一页';
+        }
+
+        return str;
+    }
+}
+
+var showPages = showPageCommon({  
+    color: 'red'
+});
+
+var total = 110;  
+for (var i = 1; i <= total; i++) {  
+    var ret = showPages(i, total);
+    console.log(ret);
+}
+
+	
+</script>
+</body>
+</html>

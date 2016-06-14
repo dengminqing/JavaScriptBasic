@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>code_clone</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+    <script type="text/javascript">
+	    function Parent(name){
+	    	this.name = name || "Adam";
+	    };
+	    Parent.prototype.say = function(){
+	    	return this.name;
+	    };
+
+	    function Child(name){};
+
+	    //继承
+		/*
+			1.默认模式--最常用的一种模式是使用Parent()构造函数来创建一个对象，然后把这个对象设为Child()的原型。这是可复用的inherit()函数的第一种实现方法;
+			需要强调的是原型（prototype属性）应该指向一个对象，而不是函数，所以它需要指向由父构造函数创建的实例（对象），而不是构造函数自己。换句话说，请注意new运算符，有了它这种模式才可以正常工作
+
+			跟踪原型链--子对象既继承了（父对象）“自己的属性”（添加给this的实例属性，比如name），也继承了原型中的属性和方法（比如say()）	
+		*/
+	    function inherit(C,P){
+	    	C.prototype = new P();
+	    };
+
+	    inherit(Child,Parent);
+
+	    var kid = new Child();
+	    console.log(kid.say()+" ...默认模式")
+
+
+	    /*
+			2.借用构造函数--解决从子对象传递参数到父对象的问题。它借用了父对象的构造函数，将子对象绑定到this，同时传入参数
+	    */ 
+	    function Child2(a,b,c,d){
+	    	Parent.apply(this,arguments);
+	    	//只能在继承在父对象的构造函数中添加到this的属性，不能继承原型上的成员
+	    }
+	    //父构造函数
+	    function Article(){
+	    	this.tags = ['js','css'];
+	    }
+	    var article = new Article();
+
+	    //BlogPost通过类式继承1（默认模式）从article继承
+	    function BlogPost(){};
+	    BlogPost.prototype = article;
+	    var blog = new BlogPost();
+
+	    //StaticPage通过借用构造函数的方式从Article继承
+	    function StaticPage(){
+	    	Article.call(this);
+	    }
+
+	    var page = new StaticPage();
+	    /*
+	    	hasOwnProperty：是用来判断一个对象是否有你给出名称的属性或对象;
+	    	isPrototypeOf是用来判断要检查其原型链的对象是否存在于指定对象实例中，是则返回true，否则返回false。
+	    */
+	    blog.tags.push('html');
+	    page.tags.push('php');
+	    console.log(article.tags);
+	    console.log(blog.tags);
+	    console.log(page.tags);
+	    //在这个例子中，blog对象修改了tags属性，同时，它也修改了父对象，因为实际上blog.tags和article.tags是引向同一个数组。而对pages.tags的修改并不影响父对象article，因为pages.tags在继承的时候是一份独立的拷贝
+
+	    /*
+			原型链
+	    */
+	    //父构造函数
+	    function Parent3(name){
+	    	this.name = name ||'Adam';
+	    };
+
+	    //在原型上添加方法
+	    Parent3.prototype.say = function(){
+	    	return this.name;
+	    };
+
+	    //子构造函数
+	    function Child3(name){
+	    	Parent3.apply(this,arguments);
+	    };
+
+	    var kid2 = new Child3('tom');
+	    console.log(kid2.name+"...原型链");
+	    console.log(typeof kid2.say+"...原型链");
+	    //使用借用构造函数模式时没有被关联的原型链
+
+	    /*
+			利用借用构造函数模式实现多继承--可以通过借用多个构造函数方式来实现多继承;使用apply()
+	    */ 
+	    function Cat(){
+	    	this.legs = 4;
+	    	this.say =function(){
+	    		return "tom365"
+	    	};
+	    };
+
+	    function Bird(){
+	    	this.wings = 2;
+	    	this.fly = true;
+	    };
+
+	    function CatWings(){
+	    	Cat.apply(this);
+	    	Bird.apply(this);
+	    };
+
+	    var jane = new CatWings();
+	
+	    /*
+			总结：
+			借用构造函数的利与弊
+			缺：这种模式的一个明显的弊端就是无法继承原型。如前面所说，原型往往是添加可复用的方法和属性的地方，这样就不用在每个实例中再创建一遍。
+			优：这种模式的一个好处是获得了父对象自己成员的拷贝，不存在子对象意外改写父对象属性的风险
+	    */ 
+
+	    /*
+			3.借用并设置原型--就是结合以上两种模式，首先借用父对象的构造函数，然后将子对象的原型设置为父对象的一个新实例
+	    */ 
+	    Child3.prototype = new Parent3();//借用父对象构造函数
+	    var k = new Child3('tom');
+	    console.log(k.name+'...借用并设置原型')
+	    console.log(k.say()+'...借用并设置原型');
+	    delete k.name;
+	    console.log(k.say()+'...借用并设置原型')	    
+
+	    /*
+			4.共享原型---这种模式不会像借用并设置原型需要调用两次父构造函数；一般是将可复用的成员放入原型中，而不是this
+			function inherit2(C,P){
+				C.prototype = P.prototype;
+			}
+			
+	    */ 
+	    function Parent4(name){
+	    	this.name = name ||'Adam';
+	    };
+
+	    Parent4.prototype.say = function(){
+	    	return this.name;
+	    };
+	    function Child4(name){};
+
+	    function inherit2(C,P){
+			C.prototype = P.prototype;			
+		}
+		inherit2(Child4,Parent4)
+		var c1 = new Child4();
+		console.log(c1.say()+"...共享原型")
+
+
+		/*临时构造函数*/
+
+		function inherit3(C,P){
+			var F = function () {};
+		    F.prototype = P.prototype;
+		    C.prototype = new F();
+		}; 
+		inherit3(Child4,Parent4)
+		var p = new Child4();
+		console.log(p.say()+"...临时构造函数");//underfine,name是父对象自己的属性，而在继承的过程中我们并没有调用new Parent()，所以这个属性并没有被创建
+
+		//重置构造函数引用
+		function Parent5(){};
+		function Child5(){};
+		function inherit4(Child5,Parent5){};
+
+		console.log(p.constructor.name);
+		console.log(p.constructor === Parent4);
+
+
+		//注意：此模块能避免就避免
+		var klass = function (Parent, props) {
+
+		    var Child, F, i;
+
+		    // 1.
+		    // new constructor
+		    Child = function () {
+		    	//如果__construct方法存在的话将被调用
+		    	//同样是在父类的__construct（如果存在）被调用前使用静态的uber属
+		        if (Child.uber && Child.uber.hasOwnProperty("__construct")) {
+		            Child.uber.__construct.apply(this, arguments);
+		        }
+		        if (Child.prototype.hasOwnProperty("__construct")) {
+		            Child.prototype.__construct.apply(this, arguments);
+		        }
+		    };
+
+		    // 2.
+		    // inherit
+		    Parent = Parent || Object;
+		    F = function () {};
+		    F.prototype = Parent.prototype;
+		    Child.prototype = new F();
+		    Child.uber = Parent.prototype;
+		    Child.prototype.constructor = Child;
+
+		    // 3.
+		    // add implementation methods
+		    //循环需要实现的方法（如例子中的__constructt和getName），并将它们添加到Child的原型中
+		    for (i in props) {
+		        if (props.hasOwnProperty(i)) {
+		            Child.prototype[i] = props[i];
+		        }
+		    }
+
+		    // return the "class"
+		    return Child;
+		};
+		var Man = klass(null, {
+		    __construct: function (what) {
+		        console.log("Man's constructor");
+		        this.name = what;
+		    },
+		    getName: function () {
+		        return this.name;
+		    }
+		});
+
+		var SuperMan = klass(Man, {
+		    __construct: function (what) {
+		        console.log("SuperMan's constructor");
+		    },
+		    getName: function () {
+		        var name = SuperMan.uber.getName.call(this);
+		        return "I am " + name;
+		    }
+		});
+
+
+		var first = new SuperMan("Adam");
+		console.log(first.getName());
+
+
+    </script>
+</body>
+</html>

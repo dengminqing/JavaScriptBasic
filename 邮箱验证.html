@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	window.onload = function(){
+		var txt1 = document.getElementById("txt1");
+		var btn = document.getElementById("btn1");
+		btn.onclick = function(){
+			var reg =/^\w\\-+@[a-z0-9]+\.[a-z]+$/i;
+			if(reg.test(txt1.value)){
+				alert("合法邮箱")
+			}else{
+				alert("ko")
+			}
+		}
+	}
+</script>
+</head>
+<body>	
+<input type="input" id="txt1" value="" />
+<input type="button" id="btn1" value="检验" />
+</body>
+</html>

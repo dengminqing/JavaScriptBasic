@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>工厂模式</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">	
+
+    //使用列表实现--不使用继承
+    function Sale2(price) {
+        this.price = (price > 0) || 100;
+        this.decorators_list = [];
+    }
+    Sale2.decorators = {};
+
+    Sale2.decorators.fedtax = {
+        getPrice: function (price) {
+            console.log(price + price * 5 / 100)
+            return price + price * 5 / 100;
+            
+        }
+    };
+
+    Sale2.decorators.quebec = {
+        getPrice: function (price) {
+            console.log(price + price * 7.5 / 100)
+            return price + price * 7.5 / 100;
+            
+        }
+    };
+
+    Sale2.decorators.money = {
+        getPrice: function (price) {
+            console.log("$" + price.toFixed(2))
+            return "$" + price.toFixed(2);
+
+        }
+    };
+
+    Sale2.prototype.decorate = function (decorator) {
+        this.decorators_list.push(decorator);
+    };
+
+    Sale2.prototype.getPrice = function () {
+        var price = this.price,
+            i,
+            max = this.decorators_list.length,
+            name;
+        for (i = 0; i < max; i += 1) {
+            name = this.decorators_list[i];
+            price = Sale2.decorators[name].getPrice(price);
+        }
+        return price;
+    }
+
+
+    var sale2 = new Sale2(100); // the price is 100 dollars
+    sale2.decorate('fedtax'); // add federal tax
+    sale2.decorate('quebec'); // add provincial tax
+    sale2.decorate('money'); // format like money
+    console.log(sale2.getPrice()); // "$112.88"
+
+
+</script>   
+</body>
+</html>

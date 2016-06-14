@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>break</title>
+<script type="text/JavaScript">
+ var num =[70,80,66,99,50,100,89];
+ var i =0;
+ while (i<num.length) {
+ 	if (num[i]<60) {
+ 		document.write("成绩:"+num[i]+"不及格"+"<br/>")
+ 		break;
+ 	};
+ 	document.write("成绩:"+num[i]+"及格"+"<br/>");
+ 	i=i+1;
+ }
+document.write("-------------------------------"+"<br/>")
+
+ var num2 = [70,80,66,99,50,100,89];
+ for (var i = 0; i < num2.length; i++) {
+ 	if (num2[i]<60) {
+ 		document.write("成绩："+num[i]+"不及格"+"<br/>");
+ 		continue;
+ 	};
+ 	document.write("成绩："+num[i]+"及格"+"<br/>");
+ }
+document.write("-------------------------------"+"<br/>")
+
+var infos = [
+	['小A','女',21,'大一'],
+    ['小B','男',23,'大三'],
+	['小C','男',24,'大四'],
+	['小C','男',24,'大四'],
+	['小D','女',21,'大一'],
+	['小E','女',22,'大四'],
+	['小F','男',21,'大一'],
+	['小G','女',22,'大二'],
+	['小H','女',20,'大三'],
+	['小I','女',20,'大一'],
+	['小J','男',20,'大三']
+];
+for (var i = 0; i < infos.length; i++) {
+	if(infos[i][3] ==="大一" && infos[i][1] ==='女'){
+		//document.write(infos[i][0]+"<br/>")
+	}
+	document.write(infos[i][3]+"<br/>")
+}
+
+
+
+</script>
+</head>
+<body>
+</body>
+</html>

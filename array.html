@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<meta name="name" content="content" chatset="utf-8">
+		<title> just a test </title>
+	</head>
+	<script>
+
+		function arrayElemCount(arrs){
+		    var newArrs = [];
+		     if(arrs.length > 0) {
+		        for(var i = 0,ilen = arrs.length; i < ilen; i+=1) {
+		            var temp = arrs[i];
+		            var count = 0;
+		            for(var j = 0,jlen = arrs.length; j < jlen; j+=1) {
+		                if(arrs[j] == temp) {
+		                    count++;
+		                    arrs[j] = -1;
+		                 }
+		            }
+		            newArrs.push(temp + ":" +count);
+		        }
+		     }
+		     return newArrs;
+		}
+		var arrs = [1,2,1,2,3,4,5,6,7,1,2,3];
+		console.log(arrayElemCount(arrs)); 
+
+		function getArrsSameAndDiffElem(arrs1,arrs2){
+		    var hash = {},
+		        sameElemArrs = [],
+		        diffElemArrs = [];
+		    if(arrs1.length > 0) {
+		        for(var i = 0,ilen = arrs1.length; i < ilen;i+=1) {
+		            hash[arrs1[i]] = 1;
+		        }
+		    }
+		    if(arrs2.length > 0) {
+		        for(var j = 0,jlen = arrs2.length; j < jlen; j+=1) {
+		            if(hash[arrs2[j]]) {
+		            // 说明有相同的元素，把相同的元素存入sameElemArrs数组里面去
+		                sameElemArrs.push(arrs2[j]);
+		            }else {
+		            // 说明是不同的元素，把不同的元素存入diffElemArrs数组里面去
+		                diffElemArrs.push(arrs2[j]);
+		            }
+		        }
+		    }		
+		    return {
+		        sameElemArr: sameElemArrs,
+		        diffElemArr: diffElemArrs
+		    }
+		}
+		 var arrs1 = ["aac","aab","cfg",'longen','tugenhua','single'];
+		 var arrs2 = ["aac","mnc","nba","cba","anta",'tugenhua','single'];
+		 console.log(getArrsSameAndDiffElem(arrs1,arrs2));
+	</script>
+ <body>
+
+ </body>
+</html>

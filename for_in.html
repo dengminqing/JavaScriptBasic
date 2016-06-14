@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+	<ul>
+		<li onclick=""></li>
+	</ul>
+    <script type="text/javascript">
+    var man ={
+    	hands:2,
+    	legs:2,
+    	heads:1
+    }
+    if(typeof Object.prototype.clone === 'undefined'){
+    	Object.prototype.clone = function(){};
+    }
+    for (var i in man) {//过滤
+    	if (man.hasOwnProperty(i)) {
+    		console.log(i,":",man[i])
+    	}
+    }
+
+    for (var i in man) {
+    	if (Object.prototype.hasOwnProperty.call(man,i)) {
+    		console.log(i,":",man[i])
+    	}
+    }
+
+    //instanceof 检测
+    function Waffle(){
+    	if(!(this instanceof Waffle)){
+    		return new Waffle();
+    	}
+    	this.tasets = "asdsd";
+    }
+    Waffle.prototype.wantOther = true;
+    var good_morn = new Waffle();
+    var good_moon = Waffle();
+    document.write(Array.isArray([]));
+    var jstr = '{"mykey":"my value","12":"34"}';
+
+    var data = JSON.parse(jstr);
+
+    var setup = function () {
+	    alert(1);
+	    return function () {
+	        alert(2);
+	    };
+	};
+
+	// using the setup function
+	var my = setup(); // alerts 1
+	my(); // alerts 2
+
+    </script>
+</body>
+</html>

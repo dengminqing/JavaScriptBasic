@@ -1,0 +1,159 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Keypress challenge</title>
+    <style>
+    #results {text-align: center; font-size: 36px;}
+    strong {color: blue;}
+    </style> 
+</head>    
+<body>
+
+<div id="results"></div>
+    
+<script>
+
+    var publisher = {
+        subscribers: {
+            any: []
+        },
+        on: function (type, fn, context) {
+            type = type || 'any';
+            fn = typeof fn === "function" ? fn : context[fn];
+            
+            if (typeof this.subscribers[type] === "undefined") {
+                this.subscribers[type] = [];
+            }
+            this.subscribers[type].push({fn: fn, context: context || this});
+        },
+        remove: function (type, fn, context) {
+            this.visitSubscribers('unsubscribe', type, fn, context);
+        },
+        fire: function (type, publication) {
+            this.visitSubscribers('publish', type, publication);
+        },
+        //辅助遍历
+        visitSubscribers: function (action, type, arg, context) {
+            var pubtype = type || 'any',
+                subscribers = this.subscribers[pubtype],
+                i,
+                max = subscribers ? subscribers.length : 0;
+                
+            for (i = 0; i < max; i += 1) {
+                if (action === 'publish') {
+                    subscribers[i].fn.call(subscribers[i].context, arg);
+                } else {
+                    if (subscribers[i].fn === arg && subscribers[i].context === context) {
+                        subscribers.splice(i, 1);
+                    }
+                }
+            }
+        }
+    };
+
+
+    function makePublisher(o) {
+        var i;
+        for (i in publisher) {
+            if (publisher.hasOwnProperty(i) && typeof publisher[i] === "function") {
+                o[i] = publisher[i];
+            }
+        }
+        o.subscribers = {any: []};
+    }
+
+    //game对象会关注所有的玩家，这样它就可以给出分数并且触发scorechange事件。它也会订阅浏览吕中所有的keypress事件，这样它就会知道按钮对应的玩家
+    var game = {
+        
+        keys: {},
+
+        addPlayer: function (player) {
+            var key = player.key.toString().charCodeAt(0);
+            this.keys[key] = player;
+        },
+
+        handleKeypress: function (e) {
+            e = e || window.event; // IE
+            if (game.keys[e.which]) {
+                game.keys[e.which].play();
+            }
+        },
+        
+        handlePlay: function (player) {
+            var i, 
+                players = this.keys,
+                score = {};
+            
+            for (i in players) {
+                if (players.hasOwnProperty(i)) {
+                    score[players[i].name] = players[i].points;
+                }
+            }
+            this.fire('scorechange', score);
+        }
+    };
+
+    function Player(name, key) {
+        this.points = 0;
+        this.name = name;
+        this.key  = key;//变动的部分是这个构造函数接受key，代表这个玩家在键盘上用来按之后得分的按键
+        this.fire('newplayer', this);
+    }
+
+    Player.prototype.play = function () {
+        this.points += 1;
+        this.fire('play', this);
+    };
+
+    var scoreboard = {
+        
+        element: document.getElementById('results'),
+        
+        update: function (score) {
+            
+            var i, msg = '';
+            for (i in score) {
+                if (score.hasOwnProperty(i)) {
+                    msg += '<p><strong>' + i + '<\/strong>: ';
+                    msg += score[i];
+                    msg += '<\/p>';
+                }
+            }
+            this.element.innerHTML = msg;
+        }
+    };
+
+
+    makePublisher(Player.prototype);
+    makePublisher(game);
+
+    Player.prototype.on("newplayer", "addPlayer", game);
+    Player.prototype.on("play",      "handlePlay", game);
+
+    //on()方法允许订阅者通过函数（scoreboard.update）或者是字符串（"addPlayer"）来指定回调函数。当有提供context（如game）时，才能通过字符串来指定回调函数
+    game.on("scorechange", scoreboard.update, scoreboard);
+
+    window.onkeypress = game.handleKeypress;
+
+
+    var playername, key;
+    while (1) {
+        playername = prompt("Add player (name)");
+        if (!playername) {
+            break;
+        }
+        while (1) {
+            key = prompt("Key for " + playername + "?");
+            if (key) {
+                alert(key)
+                break;
+            }
+        }
+        new Player(playername,  key);    
+    }
+
+
+</script>
+
+</body></html>

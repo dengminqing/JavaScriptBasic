@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Module</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<div id="eq"></div>
+<script type="text/javascript">
+	var Calculator = function(eq){
+		//这里可以声明私有成员
+		var eqCtl = document.getElementById(eq);
+		return{
+			//暴露公开成员
+			add:function(x,y){
+				var val = x + y;
+            	eqCtl.innerHTML = val;
+			}
+		};
+	};
+	//每次用的时候都要new一下，也就是说每个实例在内存里都是一份copy，如果你不需要传参数或者没有一些特殊苛刻的要求的话，我们可以在最后一个}后面加上一个括号，来达到自执行的目的，这样该实例在内存中只会存在一份copy，不过在展示他的优点之前，我们还是先来看看这个模式的基本使用方法吧。
+	var calculator = new Calculator('eq');
+	calculator.add(2,2);
+
+	var blogModule = (function(){
+		var my = {}, privateName = '博客园';
+		function privateAddTopic(data){
+
+		};
+
+		my.Name = privateName;
+		my.AddTopic = function(data){
+			privateAddTopic(data);
+		};
+		console.log(my)
+		return my;
+	}());
+
+	/*
+	(function () {
+    	// ... 所有的变量和function都在这里声明，并且作用域也只能在这个匿名闭包里
+    	// ...但是这里的代码依然可以访问外部全局的对象
+	}());
+	匿名函数后面的括号，这是JavaScript语言所要求的，因为如果你不声明的话，JavaScript解释器默认是声明一个function函数，有括号，就是创建一个函数表达式，也就是自执行，用的时候不用和上面那样在new了
+	*/ 
+	var Calculator = function () {
+        this.decimalDigits = 2;
+        // this.tax = tax;
+    };
+	Calculator.prototype = function () {
+        add = function (x, y) {
+            return x + y;
+        },
+
+        subtract = function (x, y) {
+            return x - y;
+        }
+        return {
+            add: add,
+            subtract: subtract
+        }
+    } ();
+
+    var r = function(){
+    	this.tax = 5;
+    };
+    r.prototype = new Calculator();
+
+    var  r2 = new Calculator();
+    // alert(r2.add(1,3));
+    // alert(r2.decimalDigits);
+
+
+
+</script>   
+</body>
+</html>

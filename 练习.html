@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+</head>
+<body>
+<div id="Id">121212</div>
+<style type="text/css">
+	.current{
+		background: #f00;
+		color: #f00;
+	}
+	a{display: block;padding: 5px;}
+	.tab{
+            width: 375px;
+            margin: 25px auto;
+        }
+        .tabTit li{
+            float: left;
+            width: 123px;
+            height: 38px;
+            border: 1px solid #00f;
+            text-align: center;
+            background: #ccf;
+            line-height: 38px;
+            list-style: none;
+        }
+        .tabTit li:hover{
+            background: #aaf;
+            cursor: hand;
+            cursor: pointer;
+        }
+        .tabTit .select{
+            background: #99f;
+        }
+        .tabCon div{
+            width: 373px;
+            height: 400px;
+            border: 1px solid #00f;
+            border-top: none;
+            display: none;
+        }
+        .tabCon .show{
+            display: block;
+        }
+</style>
+<div id="link">
+	<a href="javascript:;">1</a>
+	<a href="javascript:;">2</a>
+	<a href="javascript:;">3</a>
+	<a href="javascript:;">4</a>
+</div>
+<div id='tab' class='tab'>
+    <ul id='tabTit' class='tabTit'>
+        <li class='select'>标题一</li>
+        <li>标题二</li>
+        <li>标题三</li>
+    </ul>
+    <div id='tabCon' class='tabCon'>
+        <div class='show'>独行冰海的博客</div>
+        <div>欢迎光临</div>
+        <div>一切都从Tab开始</div>
+    </div>
+</div>
+<button id="add">+</button>
+<div><input type="text" value="1" id="sum"/></div>
+<button id="del">-</button>
+<script type="text/javascript">
+	$(function(){
+		var a = $("#link a");
+		a.click(function(){
+			$(this).addClass("current").siblings().removeClass("current");
+		})
+		var add = document.getElementById("add"),
+			del = document.getElementById("del");
+		add.onclick = function(){	
+			var sum = parseInt(document.getElementById("sum").value);		
+			sum = sum+1;
+			if(sum == 0){
+				return;
+			}
+			document.getElementById("sum").value = sum;
+		}
+		del.onclick = function(){
+			var sum = parseInt(document.getElementById("sum").value)
+			sum = sum -1;
+
+			if(sum <= 0){				
+				return;
+			}
+			document.getElementById("sum").value = sum;	//jq $("#num").val(sum);
+		}
+	})
+	function up(obj){
+		var i = $(obj).parent().parent().index();
+		
+		if(i>0){
+			var temp0 = $(obj).parent().parent().html();
+			var temp1 = $(obj).parent().parent().prev().html();
+			$(obj).parent().parent().prev().html(temp0);
+			$(obj).parent().parent().html(temp1);
+		}
+	}
+	function down(obj){
+		var line = $(obj).closest('table').children('tbody').children('tr').length;
+		var i    = $(obj).parent().parent().index();
+
+		if(i< line -1){
+			var temp0 = $(obj).parent().parent().html();
+			var temp1 = $(obj).parent().parent().next().html();
+			$(obj).parent().parent().next().html(temp0);
+			$(obj).parent().parent().html(temp1);
+		}
+	}
+</script>
+<script type="text/javascript">
+
+	function tab(titId, conId, titClass, conClass){	
+        var tabTits = document.getElementById(titId).children,
+            tabCons = document.getElementById(conId).children,
+            len = tabTits.length;
+        for (var i = 0; i < len; i++) {
+            // 关键在于此处，为相应数组元素添加一个索引值属性
+            tabTits[i].index = i;
+            tabTits[i].onclick = function(){
+                for (var i = 0; i < len; i++) {
+                    tabTits[i].className = '';
+                    tabCons[i].className = '';
+                };
+                // 此处利用this找到被点击的标题元素，然后获取到原来存储到这个元素（对象）身上的index属性
+                tabTits[this.index].className = titClass;
+                tabCons[this.index].className = conClass;
+            }
+        }
+    }
+    tab('tabTit','tabCon','select','show');
+
+	//定义直行车构造函数
+	var bike = function(name){
+		this.name = name;
+		this.price = 1000;
+		return this.name;
+	}
+	bike.prototype = {
+		constructor : bike,
+		sellbike:function(mode){
+		 	var bikes = this.createBike(mode);
+		 	bikes.a();
+		 	bikes.b();
+		 	return bikes;
+		},
+		createBike:function(){
+			throw new Error("父类是抽象类不能直接调用");
+		}
+	};
+
+	//继承
+	function extend(sub,sup){
+		var F = function(){};
+		//设置空函数为超类
+		F.prototype = sup.prototype;
+		// 实例化空函数，并把超类原型引用传递给子类
+		sub.prototype = new F();
+		// 重置子类原型的构造器为子类自身
+		sub.prototype.constructor =sub;
+		// 在子类中保存超类的原型,避免子类与超类耦合
+		sub.sup = sup.prototype;
+
+		if(sup.prototype.constructor === Object.prototype.constructor){
+			sup.prototype.constructor = sup;
+		}
+	}
+	var bikeChild = function(name){
+		this.name = name;
+		bike.call(this,name);
+	}
+
+	extend(bikeChild,bike);
+	//重写父类方法
+	bikeChild.prototype.createBike = function(){
+		var a = function(){
+			document.writeln("执行a的方法")
+		}
+		var b = function(){
+			document.writeln("执行b的方法");
+		}
+		return {
+			a:a,
+			b:b
+		}
+	}
+	var childClass = new bikeChild("子类");
+	document.writeln(childClass.name+":"+childClass.price+"<br/>");
+	document.writeln(childClass.sellbike("mode")+"<br/>");
+
+	//单体模式练习
+	var creatWindow = function(){
+		var div = document.createElement("div");
+		div.innerHTML ="我是弹窗内容";
+		div.style.display = 'none';
+		document.body.appendChild(div);
+		return div;
+	}
+
+	var getIntance = function(fn){
+		var result;
+		return function(){
+			return result || (result || fn.call(this,arguments))
+		}
+	}
+
+	var singleDiv = getIntance(creatWindow);
+	document.getElementById("Id").onclick = function(){
+		var win = singleDiv();
+		win.style.display = "block";
+	}
+
+	//代理模式
+
+
+</script>    
+</body>
+</html>

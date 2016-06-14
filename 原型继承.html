@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>原型继承</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<p>原型继承：没有任何类进来，只有一个对象继承自另外一个对象</p>
+<P>你有一个想复用的对象，然后你想创建第二个对象，并且获得第一个对象的功能</P>
+
+<script type="text/javascript">
+	/*
+	1.对象字面量继承
+	*/
+	var parent = {name:"tom"};	
+	var child  = object(parent);
+	//继承方式：可以使用一个空的临时构造函数F()，然后设定F()的原型为parent对象。最后，返回一个临时构造函数的新实例。
+	function object(o){
+		function F(){}
+		F.prototype = o;
+		return new F();
+	}
+
+	console.log(child.name+"..字面量");
+	//在这里child总是以一个空对象开始，它没有自己的属性但通过原型链（__proto__）拥有父对象的所有功能
+
+	/*
+	2.	使用构造函数创建继承
+	*/ 
+	function Person(){
+		this.name = "Adam";
+	};
+
+	Person.prototype.getName = function(){
+		return this.name;
+	};
+	var papa = new Person();
+	//继承inherit
+	var kid = object(papa);
+	console.log(kid.getName()+"..通过构造函数");
+
+	/*
+	es5定义继承模式
+	*/ 
+	//Object.create()接收一个额外的参数——一个对象。这个额外对象中的属性将被作为自己的属性添加到返回的子对象中。这让我们可以很方便地将继承和创建子对象在一个方法调用中实现。var child2 = Object.create(parent,{age:{value:2}})
+	var child2 = Object.create(parent,{
+		age:{value:2}
+	})	
+	console.log(child2.hasOwnProperty("age")+"...通过Object.create()");
+
+	/*
+	3.通过复制属性继承---一个对象通过简单地复制另一个对象来获得功能
+	*/ 
+
+	//浅复制--（因为在JavaScript中对象是按引用传递），如果你改变子对象的一个属性，而这个属性恰好是一个对象，那么你也会改变父对象
+	function extend(parent,child){
+		var i;		
+		child = child || {};
+		for(i in parent){
+			if(parent.hasOwnProperty(i)){
+				child[i] = parent[i];
+			}
+		}
+		return child;
+	};
+	var dad = {name:"adam"};
+	var k   = extend(dad);
+	console.log(k.name+"..浅复制");
+
+
+	//深复制---检查准备复制的属性本身是否是对象或者数组，如果是，也遍历它们的属性并复制
+
+	var dads = {
+		counts:[1,2,3],
+		reads:{paper:true}
+	}
+	var k2 = extend(dads);
+	k2.counts.push(4);
+	console.log(dads.counts.toString());
+	console.log(dads.reads === k2.reads)
+
+
+	function extendDeep(parent,child){
+		var i,
+			toStr = Object.prototype.toString,
+			astr  ="[object Array]";//注意小写
+		child = child || {};
+
+		for(i in parent){
+			if(parent.hasOwnProperty(i)){
+				if(typeof parent[i] === "object"){
+					child[i] = (toStr.call(parent[i]) === astr) ? [] :{};
+					extendDeep(parent[i],child[i]);
+				}else{
+					child[i] = parent[i];
+				}
+			}
+		}
+		return child;
+	};
+
+	var daDeep = {
+		counts:[1,2,3],
+		reads:{pager:true}
+	};//父对象
+
+	var k3 = extendDeep(daDeep);//子对象
+
+	k3.counts.push(4);
+	console.log(k3.counts.toString());//1,2,3,4
+	console.log(daDeep.counts.toString()+"...深复制");//没有被修改
+	//通过复制属性继承的模式很简单且应用很广泛
+
+	/*
+	混元---从任意多数量的对象中复制属性，然后将它们混在一起组成一个新对象;只需要遍历传入的每个参数然后复制它们的每个属性
+	*/ 
+	function mix(){
+		var arg,prop,child ={};
+		for(arg =0;arg<arguments.length;arg +=1){
+			for(prop in arguments[arg]){
+				if(arguments[arg].hasOwnProperty(prop)){
+					child[prop] =arguments[arg][prop]
+				}
+			}		
+		}
+		return child;
+	}
+	var cake = mix(
+			{eggs:2,large:true},
+			{butter:1,salted:true},
+			{flour:"3 cups"},
+			{sugar:"sure!"}
+	);
+	console.dir(cake)
+
+	/*
+		借用方法
+	*/
+	//从数组借用 slice();
+	function f(){
+		//var args = [].slice.call(arguments,1,3);
+		var args =Array.prototype.slice.call(arguments,1,3)
+		return args;
+	}
+	console.log(f(1,2,3,4,5,6));
+	//在这个例子中，有一个空数组被创建了，因为要借用它的方法。同样的事情也可以使用一种看起来代码更长的方法来做，那就是直接从数组的原型中借用方法，使用Array.prototype.slice.call(...)。这种方法代码更长一些，但是不用创建一个空数组
+
+	//借用并绑定
+	var one = {
+	    name: "object",
+	    say: function (greet) {
+	        return greet + ", " + this.name;
+	    }
+	};
+
+	var two = {
+	    name: "another object"
+	};
+	//在这个例子中，say()方法中的this指向了two，this.name是“another object”。但是如果在某些场景下你将th函数赋值给了全局变量或者是将这个函数作为回调，会发生什么？在客户端编程中有非常多的事件和回调，所以这种情况经常发生
+
+	function bind(o, m) {
+	    return function () {
+	        return m.apply(o, Array.prototype.slice.call(arguments));
+	    };
+	}	
+	var twosay = bind(two, one.say);
+	console.log(twosay('yo')); // "yo, another object"
+	//绑定是奢侈的，你需要付出的代价是一个额外的闭包
+
+	//es5
+
+	if (typeof Function.prototype.bind === "undefined") {
+		alert(typeof Function.prototype.bind === "undefined")
+		Function.prototype.bind = function(thisArg){
+			var fn = this,
+				slice = Array.prototype.slice,
+				args  = slice.call(arguments,1);
+			return function(){
+				return fn.apply(thisArg,args.contact(slice.call(arguments)));
+			}
+		}
+	}
+	var twosay2 = one.say.bind(two);
+	console.log(twosay2("tomsss"));
+</script>   
+</body>
+</html>

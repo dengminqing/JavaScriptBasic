@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="javascript:;" rel="stylesheet">
+</head>
+<body>
+<table>
+	<caption>table title and/or explanatory text</caption>
+	<thead>
+		<tr>
+			<th>header</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>data</td>
+			<td>data</td>
+			<td>
+				<a href="javascript:;" class="up" id="up" onClick="up(this)">上移</a>&nbsp;&nbsp;
+				<a href="javascript:;" class="down" id="down">下移</a>
+			</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>data</td>
+			<td>data</td>
+			<td>
+				<a href="javascript:;" class="up" id="up" onClick="up(this)">上移</a>&nbsp;&nbsp;
+				<a href="javascript:;" class="down" id="down">下移</a>
+			</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>data</td>
+			<td>data</td>
+			<td>
+				<a href="javascript:;" class="up" id="up" onClick="up(this)">上移</a>&nbsp;&nbsp;
+				<a href="javascript:;" class="down" id="down">下移</a>
+			</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>data</td>
+			<td>data</td>
+			<td>
+				<a href="javascript:;" class="up" id="up" onClick="up(this)">上移</a>&nbsp;&nbsp;
+				<a href="javascript:;" class="down" id="down">下移</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<script type="text/javascript">
+function up(obj){
+	var i = obj.parentNode().parentNode().index();
+	if(i > 1){
+		var tem0 = obj.parentNode().parentNode().innnHTML();
+		var tem1 = obj.parentNode().parentNode().prev().innnHTML();
+		console.log(tem0)
+		obj.parentNode().parentNode().prev().innnHTML(tem0);
+		obj.parentNode().parentNode().prev().innnHTML(tem1);
+	}
+}
+
+</script>
+</body>
+</html>

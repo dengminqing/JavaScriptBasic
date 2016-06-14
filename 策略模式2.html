@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>策略模式2</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	var data ={
+		first_name:"Super",
+		last_name:"Man",
+		age:'unknown',
+		username:'o_O'
+	};
+
+	var validator = {
+    	types:{},
+
+    	message:[],
+
+    	config:{},
+
+    	validate:function(data){
+    		var i,msg,type,checker,result_ok;
+    		this.messages =[];
+    		for (i in data) {
+    			if (data.hasOwnProperty(i)) {
+    				type = this.config[i];
+    				checker = this.types[type];
+    				if (!type) {
+    					continue;
+    				};
+    				console.log(checker)
+    				if (!checker) {
+
+    					throw{
+    						name:"ValidationError",
+    						message:'No handle to validate type' + type
+    					};
+    				};
+
+    				result_ok =checker.validate(data[i]);
+    				if (!result_ok) {
+    					msg = "Invalid value for *" + i +"*,"+checker.instructions;
+    					this.messages.push(msg);
+    				}
+    			}
+    		}
+    		return this.hasErrors();
+    	},
+
+    	hasErrors:function(){
+    		return this.messages.length !== 0;
+    	}
+    };
+
+	validator.config = {
+		first_name:'isNonEmpty',
+		age:'isNumber',
+		username:'isAlphaNum'
+	};
+
+	validator.types.isNonEmpty ={
+		validate:function(value){
+			return value !== "";
+		},
+		instructions:"the value cannot be empty"
+	};
+
+	validator.types.isNumber ={
+		validate:function(value){
+			return !isNaN(value);
+		},
+		instructions:"the value can onlt be a valid number"
+	};
+
+	validator.types.isAlphaNum = {
+        validate: function (value) {
+            return !/[^a-z0-9]/i.test(value);
+        },
+        instructions: "the value can only contain characters and numbers, no special symbols"
+    };
+
+        
+	validator.validate(data);
+	if (validator.hasErrors()) {
+		console.log(validator.messages.join("\n"));
+	};
+
+
+	/********* ***********************************************************************************************/ 
+	var  bouns = function(salary,level){
+		if (level === "A") {
+			return salary * 4;
+		};
+		if (level === "B") {
+			return salary *3;
+		};
+
+		if (level === "C") {
+			return salary *2 ;
+		};
+		//calculateBouns 函数包含了很多if-else语句。
+		//calculateBouns 函数缺乏弹性，假如还有D等级的话，那么我们需要在calculateBouns 函数内添加判断等级D的if语句；
+		//算法复用性差，如果在其他的地方也有类似这样的算法的话，但是规则不一样，我们这些代码不能通用
+
+	}
+
+	/**使用组合函数重构代码**/ 
+	var perA = function(salary){
+		return salary * 4;
+	}
+
+	var perB = function(salary){
+		return salary *3;
+	}
+
+	var perC = function(salary){
+		return salary *2;
+	}
+
+	var bouns2 =function(salary,level){
+		if (level === "A") {
+			return perA(salary);
+		};
+		if (level === "B") {
+			return perB(salary);
+		};
+		if (level === "C") {
+			return perC(salary);
+		};
+		//bouns2 函数有可能会越来越大，比如增加D等级的时候，而且缺乏弹性。
+	}
+	document.write(bouns2(4000,"A")+"元<br/>")
+	document.write(bouns2(2500,"B")+"元<br/>")
+
+	/*把它们一个个封装起来，将不变的部分和变化的部分隔开，实际就是将算法的使用和实现分离出来；算法的使用方式是不变的，都是根据某个算法取得计算后的奖金数，而算法的实现是根据绩效对应不同的绩效规则；
+
+一个基于策略模式的程序至少由2部分组成，第一个部分是一组策略类，策略类封装了具体的算法，并负责具体的计算过程。第二个部分是环境类Context，该Context接收客户端的请求，随后把请求委托给某一个策略类。*/ 
+
+	//基于面向对象重构
+	var perforA = function(){
+		perforA.prototype.calcucate = function(salary){
+			return salary *4;
+		}
+	}
+	var perforB =function(){
+		perforB.prototype.calcucate = function(salary){
+			return salary *3;
+		}
+	}
+	var perforC =function(){
+		perforC.prototype.calcucate = function(salary){
+			return salary *2;
+		}
+	}
+
+	var Bouns = function(){
+		this.salary =null;//原始工资
+		this.level  =null;//绩效等级对应策略对象
+	}
+
+	Bouns.prototype.setSalary = function(salary){
+		this.salary = salary;// 保存员工的原始工资
+	}
+	Bouns.prototype.setlevel = function(level){
+		this.level = level;// 设置员工绩效等级对应的策略对象
+	}
+
+	Bouns.prototype.getBouns = function(){
+		return this.level.calcucate(this.salary);
+	}
+
+	var bouns = new Bouns();
+	bouns.setSalary(10000);
+	bouns.setlevel(new perforA()); // 设置策略对象
+	console.log(bouns.getBouns());  // 40000
+	 
+	bouns.setlevel(new perforB()); // 设置策略对象
+	console.log(bouns.getBouns());  // 30000
+
+	/*策略模式*/ 
+	//封装对象
+	var obj = {
+		"A":function(salary){
+			return salary *4;
+		},
+		"B":function(salary){
+			return salary *3;
+		},
+		"C":function(salary){
+			return salary *2;
+		}
+	}
+	//策略模式指的是定义一系列的算法,并且把它们封装起来，但是策略模式不仅仅只封装算法，我们还可以对用来封装一系列的业务规则，只要这些业务规则目标一致，我们就可以使用策略模式来封装它们；
+
+	//calBouns类在这里作为Context，负责接收用户的请求并委托给obj对象
+	var calBouns = function(level,salary){
+		return obj[level](salary);
+	}
+	console.log(calBouns("A",10000))
+
+</script>    
+</body>
+</html>

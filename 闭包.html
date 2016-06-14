@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>closure</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+闭包是一系列代码块（在ECMAScript中是函数），并且静态保存所有父级的作用域。通过这些保存的作用域来搜寻到函数中的自由变量。
+<script type="text/javascript">
+	//静态作用域；也就是闭包
+	function foo() {
+	  var x = 10;
+
+	  return function bar() {
+	    console.log(x);
+	  };
+	}
+	 
+	// "foo"返回的也是一个function
+	// 并且这个返回的function可以随意使用内部的变量x
+	 
+	var returnedFunction = foo();
+	 
+	// 全局变量 "x"
+	var x = 20;
+	 
+	// 支持返回的function
+	returnedFunction(); // 结果是10而不是20
+
+
+	//另一种写法
+	// 全局变量 "y"
+	var y = 10;
+	// 全局function
+	function foo2(){
+		console.log(y)
+	}
+
+	(function(funarg){
+		// 局部变量 "y"
+		var y = 20;
+		// 这不会有歧义
+		  // 因为我们使用"foo"函数的[[Scope]]里保存的全局变量"x",
+		  // 并不是caller作用域的"x"
+		funarg();//10
+	}(foo2));
+
+/*
+ECMAScript中，闭包指的是：
+
+	从理论角度：所有的函数。因为它们都在创建的时候就将上层上下文的数据保存起来了。哪怕是简单的全局变量也是如此，因为函数中访问全局变量就相当于是在访问自由变量，这个时候使用最外层的作用域。
+
+	从实践角度：以下函数才算是闭包：
+	即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
+	在代码中引用了自由变量
+*/
+	[1, 2, 3].map(function (element) {
+	  return element * 2;
+	}); // [2, 4, 6]
+
+	(function foo(i){
+		if (i===3) {
+			return;
+		}else{		
+			console.log(i)	
+			foo(++i)			
+		}
+	}(0))
+
+	function factory() { 
+	    var name = 'laruence'; 
+	    var intro = function(){ 
+	        alert('I am ' + name); 
+	    } 
+	    return intro; 
+	} 
+
+	function app(para){ 
+	    var name = para; 
+	    var func = factory(); 
+	    func(); 
+	} 
+
+	app('eve');//laruence
+
+	
+	var name = 'laruence'; 
+	function echo() { 
+	    alert(name); 
+	    var name = 'eve'; 
+	    alert(name); 
+	    alert(age); 
+	} 
+
+	echo();
+</script>    
+</body>
+</html>

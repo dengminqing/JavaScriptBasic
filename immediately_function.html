@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+    <script type="text/javascript">
+    //Module模式
+    var counter = (function(){
+    	var i = 0;
+    	return {
+    		get:function(){
+    			return i;
+    		},
+    		set:function(val){
+    			i = val;
+    		},
+    		increment:function(){
+    			return ++i
+    		}
+    	}
+    }());
+    console.log(counter.get());
+    console.log(counter.set(3));
+    console.log(counter.increment());
+
+    //检测数组
+    var myArray = [];
+    if(myArray instanceof Array){
+    	console.log("myArray is An instance of Array")
+    }else{
+    	console.log("myArray is not an instance of Array")
+    }
+
+    function printing() {
+	   console.log(1+"first");
+	   setTimeout(function() { console.log(2+"second"); }, 1000);
+	   setTimeout(function() { console.log(3+"third"); }, 0);
+	   console.log(4+"four");
+	}
+	printing();
+	function isInteger(str) 
+	{ 
+	    if(/^-?\d+$/.test(str)) 
+	    { 
+	        return true; 
+	    } 
+	    return false; 
+	} 
+	 
+	function isPrime(number) {
+	   // If your browser doesn't support the method Number.isInteger of ECMAScript 6,
+	   // you can implement your own pretty easily
+	   //!Number.isInteger(number)
+	   if (typeof number !== 'number' || isInteger(number)) {
+	      // Alternatively you can throw an error.
+	      return false;
+	   }
+	   if (number < 2) {
+	      return false;
+	   }
+	 
+	   if (number === 2) {
+	      return true;
+	   } else if (number % 2 === 0) {
+	      return false;
+	   }
+	   var squareRoot = Math.sqrt(number);
+	   for(var i = 3; i <= squareRoot; i += 2) {
+	      if (number % i === 0) {
+	         return false;
+	      }
+	   }
+	   return true;
+	}
+
+	//alert(isPrime(12));
+
+	var global_val = 1;
+	global_nol = 2;
+	(function(){
+		global_formfunc = 3;
+	}())
+	document.write(delete global_val+"<br/>");
+	document.write(delete global_nol+"<br/>");
+	document.write(delete global_formfunc+"<br/>");
+
+    </script>
+</body>
+</html>

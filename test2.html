@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	var z = 10;
+
+	function foo() {
+		alert(z)
+	}
+
+	//foo(); // 10 – 使用静态和动态作用域的时候
+	(function () {
+
+	  var z = 20;
+	  foo(); // 10 – 使用静态作用域, 20 – 使用动态作用域
+
+	})();
+
+	//实现如下语法的功能：var a = (5).plus(3).minus(6); //2
+	Number.prototype.plus=function (num){			
+		return this.valueOf()+num;		
+	};		
+	Number.prototype.minus=function (num){			
+		console.log(this.valueOf())
+		return this.valueOf()-num;		
+	};
+	var a = (5).plus(3).minus(6); //5
+	
+	var arr = [61,22,68,50,2];
+	function turnFunction(arrays){
+		var i,
+			len = arrays.length;
+		for(i = 0; i<len; i+=1){			
+			arrays[i] = function(arr,index){
+				var item = arr[index];
+				return function(){
+					alert(item);
+				}
+			}(arrays,i);
+		}
+	}
+	turnFunction(arr);
+
+ 	var arr1 = ["i", "b", "c", "d", "e", "f","x"]; //数组A  
+
+    var arr2 = ["a", "b", "c", "d", "e", "f", "g"];//数组B  
+
+    var temp = []; //临时数组1  
+
+    var temparray = [];//临时数组2  
+
+ 	for (var i = 0; i < arr2.length; i++) {  
+
+        temp[arr2[i]] = true;//巧妙地方：把数组B的值当成临时数组1的键并赋值为真  
+
+    };  
+
+    for (var i = 0; i < arr1.length; i++) {  
+
+        if (!temp[arr1[i]]) {  
+
+            temparray.push(arr1[i]);//巧妙地方：同时把数组A的值当成临时数组1的键并判断是否为真，如果不为真说明没重复，就合并到一个新数组里，这样就可以得到一个全新并无重复的数组  
+
+        } ;  
+
+    };  
+
+    document.write(temparray.concat(arr2).join(",") + ""); 
+
+
+    var arrs = {temp:[1,2,3,4,5],temp2:['a','b','c','d']};
+    alert(arrs.temp)
+</script>   
+</body>
+</html>

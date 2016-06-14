@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>观察者模式</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	/*
+		subscribers 一个数组
+		subscribe() 将订阅者加入数组
+		unsubscribe() 从数组中移除订阅者
+		publish() 遍历订阅者并调用它们订阅时提供的方法
+		所有三个方法都需要一个type参数，因为一个发布者可能触发好几种事件（比如同时发布杂志和报纸），而订阅者可以选择性地订阅其中的一种或几种
+	*/ 
+
+	//我们假设有一个发布者paper，它发行一份日报和一份月刊。无论是日报还是月刊发行，有一个名叫joe的订阅者都会收到通知
+	var publisher ={
+		//订阅者
+		subscribers:{
+			any:[]//用来保存所有的订阅者
+		},
+		subscribe:function(fn,type){//订阅方法	
+
+			type = type || 'da';	
+			if (typeof this.subscribers[type] === "undefined") {
+				this.subscribers[type] = [];
+			}
+			this.subscribers[type].push(fn);//将订阅者加入数组
+			
+		},
+		unsubscribe:function(fn,type){
+			this.visitSubscribers('unsubscribe',fn,type);
+		},
+		publish:function(publication,type){			
+			this.visitSubscribers("publish",publication,type);
+			
+		},
+		visitSubscribers:function(action,arg,type){
+			var pubtype = type || 'da',
+				subscribers = this.subscribers[pubtype],
+				i,
+				max = subscribers.length;
+			for (i = 0; i < max; i += 1) {
+				if (action === "publish") {
+					subscribers[i](arg);
+				}else{
+					if (subscribers[i] === arg) {
+						subscribers.splice(i, 1);
+					};
+				}
+			}
+		}
+	}
+
+	//这个函数接受一个对象作为参数，并通过复制通用的发布者的方法将这个对象墨迹成发布者
+	function makePublisher(o){
+		var i;
+		for( i in publisher){
+			if (publisher.hasOwnProperty(i) && typeof publisher[i] === "function") {
+				o[i] = publisher[i];
+			}
+		}
+		o.subscribers = {any:[]};	//复制通用的发布者的方法	
+	}
+
+	//实现paper对象，它能做的事情就是发布日报和月刊
+
+	var paper = {
+		daily:function(){
+			this.publish("big news today");
+		},
+		monthly:function(){
+			this.publish("interesting analysis","monthly")
+		}
+	}
+
+	//paper对象变成发布者
+	makePublisher(paper);
+
+	//订阅者对象
+	var joe = {
+		drinkCoffee:function(paper){			
+			console.log("Just read " + paper);
+		},
+		sundayPreNap:function(monthly){
+			console.log("About to fall asleep reading this " +monthly);
+		}
+	};
+	//让joe来订阅paper
+	// paper.subscribe(joe.drinkCoffee);
+	// paper.subscribe(joe.sundayPreNap,'monthly');//发布月刊
+
+	// paper.daily();
+
+ //    paper.monthly();
+
+    //让joe也变成一个发布者
+    makePublisher(joe);
+
+    joe.tweet = function(msg){
+    	this.publish(msg);
+    };
+    //现在假设paper的公关部门准备通过Twitter收集读者反馈，于是它订阅了joe，提供了一个方法readTweets()：
+    paper.readTweets = function(tweet){
+    	alert("call big meeting! someone" + tweet);
+    };
+    joe.subscribe(paper.readTweets);
+
+    joe.tweet("hated the paper today")
+</script>    
+</body>
+</html>
